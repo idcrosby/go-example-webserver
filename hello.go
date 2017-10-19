@@ -8,7 +8,7 @@ import (
 func main() {
 	http.HandleFunc("/", hello)
 	err := http.ListenAndServe(":8080", nil)
-	if err != nil {
+	f err != nil {
 		log.Fatal("Failed to start server: ", err)
 	}
 }
