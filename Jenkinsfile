@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        docker { image 'icrosby/jenkins-agent:v2'}
+        docker { image 'icrosby/jenkins-agent:dind'}
     }
 
     stages {
