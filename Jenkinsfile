@@ -23,7 +23,7 @@ pipeline {
         stage('BuildImage') {
             steps {
                 echo 'Building Docker image'
-                sh 'docker build -t ${JOB_NAME}:${BUILD_ID} .'
+                sh 'sudo docker build -t ${JOB_NAME}:${BUILD_ID} .'
             }
         }
     }
