@@ -35,5 +35,11 @@ pipeline {
                 sh 'sudo docker run ${JOB_NAME}:${BUILD_ID} /test.sh'
             }
         }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying to Kubernetes cluster'
+                sh 'kubectl apply -f deployment.yaml'
+            }
+        }
     }
 }

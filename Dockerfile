@@ -1,4 +1,4 @@
-FROM golang:1.9-alpine
+FROM golang:1.9
 
 COPY *.go /go/
 RUN go build -o /server
