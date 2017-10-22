@@ -1,6 +1,9 @@
 pipeline {
     agent {
-        docker { image 'icrosby/jenkins-agent:dind'}
+        docker { 
+            image 'icrosby/jenkins-agent:dind'
+            args '-v /etc/passwd:/etc/passwd'
+        }
     }
 
     stages {
