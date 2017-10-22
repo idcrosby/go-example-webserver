@@ -2,7 +2,7 @@ pipeline {
     agent {
         docker { 
             image 'icrosby/jenkins-agent:dind'
-            args '-u 10000:10000'
+            args '-u root'
         }
     }
 
@@ -26,7 +26,7 @@ pipeline {
         stage('BuildImage') {
             steps {
                 echo 'Building Docker image'
-                docker.build("${JOB_NAME}:${BUILD_ID}")
+                sh 'sudo docker build -t ${JOB_NAME}:${BUILD_ID} .'
             }
         }
     }
