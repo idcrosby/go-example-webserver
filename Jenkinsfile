@@ -29,5 +29,11 @@ pipeline {
                 sh 'sudo docker build -t ${JOB_NAME}:${BUILD_ID} .'
             }
         }
+        stage('TestImage') {
+            steps {
+                echo 'Testing Docker image'
+                sh 'sudo docker run ${JOB_NAME}:${BUILD_ID} /test.sh'
+            }
+        }
     }
 }
