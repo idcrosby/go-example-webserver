@@ -1,7 +1,7 @@
 pipeline {
     agent {
         docker { 
-            image 'icrosby/jenkins-agent:dind'
+            image 'icrosby/jenkins-agent:kube'
             args '-u root'
         }
     }
