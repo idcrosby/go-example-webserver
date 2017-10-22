@@ -2,7 +2,7 @@ pipeline {
     agent {
         docker { 
             image 'icrosby/jenkins-agent:dind'
-            args '-v /etc/passwd:/etc/passwd'
+            args '-u 10000:10000'
         }
     }
 
