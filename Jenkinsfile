@@ -23,5 +23,11 @@ pipeline {
                 sh 'go test'
             }
         }
+        stage('BuildImage') {
+            steps {
+                echo 'Building Docker image'
+                sh 'sudo docker build -t ${JOB_NAME} .'
+            }
+        }
     }
 }
