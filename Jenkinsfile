@@ -23,23 +23,5 @@ pipeline {
                 sh 'go test'
             }
         }
-        stage('BuildImage') {
-            steps {
-                echo 'Building Docker image'
-                sh 'sudo docker build -t ${JOB_NAME}:${BUILD_ID} .'
-            }
-        }
-        stage('TestImage') {
-            steps {
-                echo 'Testing Docker image'
-                sh 'sudo docker run ${JOB_NAME}:${BUILD_ID} /test.sh'
-            }
-        }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying to Kubernetes cluster'
-                sh 'kubectl apply -f deployment.yaml'
-            }
-        }
     }
 }
