@@ -14,7 +14,8 @@ node {
   stage("Initialize")
   docker.image('smesch/kubectl').inside{
         withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
-            sh "kubectl --kubeconfig=$KUBECONFIG get ing ingress-blue-green -o jsonpath='{.spec.rules[2].http.paths[0].backend.serviceName}' > activeservice"
+            sh "kubectl --kubeconfig=$KUBECONFIG get ing ingress-blue-green -o 
+            json | jq '.spec.rules[2].http.paths[0].backend.serviceName' > activeservice"
 
             activeService = readFile('activeservice').trim()
             if (activeService == "${appName}-blue") {
@@ -22,7 +23,7 @@ node {
               altTag = "blue"
             }
 
-            sh "kubectl --kubeconfig=$KUBECONFIG get ing ingress-blue-green -o jsonpath='{.spec.rules[2].host}' > deploy_route"
+            sh "kubectl --kubeconfig=$KUBECONFIG get ing ingress-blue-green -o json | jq '.spec.rules[2].host' > deploy_route"
             deploy_route = readFile('deploy_route').trim()
        }
   }
