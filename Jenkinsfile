@@ -1,44 +1,37 @@
-pipeline {
-    agent {
-        docker { 
-            image 'icrosby/jenkins-agent:kube'
-            args '-u root'
+node {
+
+    def DOCKER_HUB_ACCOUNT = 'vlal'
+    def DOCKER_IMAGE_NAME = 'go-example-webserver'
+    def K8S_DEPLOYMENT_NAME = 'go-example-webserver'
+
+    checkout scm
+
+    stage("build")
+    echo 'Building Go App'
+    docker.image('icrosby/jenkins-agent:kube').withRun('-u root').inside{
+        sh 'go build' 
+    }
+
+    stage("test")
+    echo 'Testing Go App'
+    docker.image('icrosby/jenkins-agent:kube').withRun('-u root').inside{
+        sh 'go test' 
+    }
+
+    stage("build image")
+    echo 'Building Docker image'
+    def app = docker.build "${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}:${BUILD_ID}"
+
+    echo 'Testing Docker image'
+    stage("test image") {
+        docker.image("${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}:${BUILD_ID}").inside {
+            sh './test.sh'
         }
     }
 
-    stages {
-        stage('Build') {
-            environment {
-                GOPATH = "${JENKINS_HOME}/jobs/${JOB_NAME}/builds/${BUILD_ID}"
-            }
-            steps {
-                echo 'Building...'
-                sh 'go build'
-                
-            }
-        }
-        stage('Test') {
-            steps {
-                echo 'Testing...'
-                sh 'go test'
-            }
-        }
-        stage('BuildImage') {
-            steps {
-                echo 'Building Docker image'
-                sh 'sudo docker build -t ${JOB_NAME} .'
-            }
-        }
-        stage('TestImage') {
-            steps {
-                echo 'Testing Docker image'
-                sh 'sudo docker run ${JOB_NAME} /test.sh'
-            }
-        }
-        docker.withRegistry('https://index.docker.io/v1/', 'docker-hub') {
-            stage("Push")
-                echo 'Pushing Docker Image'
-                app.push()
-        }
+    stage("Push")
+    echo 'Pushing Docker Image'
+    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub') {
+        app.push()
     }
 }
