@@ -1,55 +1,47 @@
-def appName="go-webserver"
-def project=""
-def tag="blue"
-def altTag="green"
-
 node {
-  def DOCKER_HUB_ACCOUNT = 'icrosby'
-  def DOCKER_IMAGE_NAME = 'go-example-webserver'
-  def K8S_DEPLOYMENT_NAME = 'go-example-webserver'
 
-  project = env.PROJECT_NAME
+    def DOCKER_HUB_ACCOUNT = 'icrosby'
+    def DOCKER_IMAGE_NAME = 'go-example-webserver'
+    def K8S_DEPLOYMENT_NAME = 'go-example-webserver'
 
-  echo "Initializing..."
-  stage("Initialize")
-  docker.image('smesch/kubectl').inside{
-        withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
-            sh "kubectl --kubeconfig=$KUBECONFIG get ing ingress-blue-green -o json | jq '.spec.rules[2].http.paths[0].backend.serviceName' > activeservice"
+    checkout scm
 
-            activeService = readFile('activeservice').trim()
-            if (activeService == "${appName}-blue") {
-              tag = "green"
-              altTag = "blue"
-            }
-
-            sh "kubectl --kubeconfig=$KUBECONFIG get ing ingress-blue-green -o json | jq '.spec.rules[2].host' > deploy_route"
-            deploy_route = readFile('deploy_route').trim()
-       }
-  }
-
-  stage("build image")
-  echo 'Building Docker image tag ${tag}'
-  def app = docker.build "${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}:${tag}"
-
-  stage("push")
-  echo 'Pushing Docker Image'
-  docker.withRegistry('https://index.docker.io/v1/', 'docker-hub') {
-    app.push()
-  }
-
-  stage("deploy") 
-  echo "Deploying image"
-  docker.image('smesch/kubectl').inside{
-    withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
-      sh "kubectl --kubeconfig=$KUBECONFIG set image deployment/${K8S_DEPLOYMENT_NAME}-${tag} ${K8S_DEPLOYMENT_NAME}=${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}:${tag}"
+    echo 'Building Go App'
+    stage("build") {
+        docker.image("icrosby/jenkins-agent:kube").inside('-u root') {
+            sh 'go build' 
+        }
     }
-  }
 
-  stage("Test") {
-    input message: "Test new deployment via: http://${deploy_route}. Approve?", id: "approval"
-  }
+    echo 'Testing Go App'
+    stage("test") {
+        docker.image('icrosby/jenkins-agent:kube').inside('-u root') {
+            sh 'go test' 
+        }
+    }
 
-  stage("Go Live") {
-    sh "kubectl --kubeconfig=$KUBECONFIG patch ing ingress-blue-green -p '{"spec":{"rules":[{"host": "go-webserver.com","http":{"paths":[{"backend":{"serviceName":"go-webserver-${tag}","servicePort":80}}]}},{"host": "blue-go-webserver.com","http":{"paths":[{"backend":{"serviceName":"go-webserver-blue","servicePort":80}}]}},{"host": "green-go-webserver.com","http":{"paths":[{"backend":{"serviceName":"go-webserver-green","servicePort":80}}]}}]}}'"
-  }
+    stage("build image")
+    echo 'Building Docker image'
+    def app = docker.build "${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}:${BUILD_ID}"
+
+    echo 'Testing Docker image'
+    stage("test image") {
+        docker.image("${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}:${BUILD_ID}").inside {
+            sh './test.sh'
+        }
+    }
+
+    stage("Push")
+    echo 'Pushing Docker Image'
+    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub') {
+        app.push()
+    }
+
+    stage("Deploy") 
+    echo "Deploying image"
+    docker.image('smesch/kubectl').inside{
+        withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+            sh "kubectl --kubeconfig=$KUBECONFIG set image deployment/${K8S_DEPLOYMENT_NAME} ${K8S_DEPLOYMENT_NAME}=${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}:${BUILD_ID}"
+        }
+    }
 }
