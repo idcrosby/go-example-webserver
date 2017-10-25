@@ -51,9 +51,9 @@ node {
 
   stage("go to production")
   echo "Deploying to Production"
-    docker.image('smesch/kubectl').inside{
+  docker.image('smesch/kubectl').inside{
     withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
-        sh "kubectl --kubeconfig=$KUBECONFIG patch ing ingress-blue-green -p '{"spec":{"rules":[{"host": "go-webserver.com","http":{"paths":[{"backend":{"serviceName":"go-webserver-${tag}","servicePort":80}}]}},{"host": "blue-go-webserver.com","http":{"paths":[{"backend":{"serviceName":"go-webserver-blue","servicePort":80}}]}},{"host": "green-go-webserver.com","http":{"paths":[{"backend":{"serviceName":"go-webserver-green","servicePort":80}}]}}]}}'"
+        sh "kubectl --kubeconfig=$KUBECONFIG patch ing ingress-blue-green -p '{\"spec\":{\"rules\":[{\"host\": \"go-webserver.com\",\"http\":{\"paths\":[{\"backend\":{\"serviceName\":\"go-webserver-${tag}\",\"servicePort\":80}}]}},{\"host\": \"blue-go-webserver.com\",\"http\":{\"paths\":[{\"backend\":{\"serviceName\":\"go-webserver-blue\",\"servicePort\":80}}]}},{\"host\": \"green-go-webserver.com\",\"http\":{\"paths\":[{\"backend\":{\"serviceName\":\"go-webserver-green\",\"servicePort\":80}}]}}]}}'"
     }
   }
 }
