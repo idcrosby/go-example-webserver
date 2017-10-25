@@ -35,5 +35,10 @@ pipeline {
                 sh 'sudo docker run ${JOB_NAME} /test.sh'
             }
         }
+        docker.withRegistry('https://index.docker.io/v1/', 'docker-hub') {
+            stage("Push")
+                echo 'Pushing Docker Image'
+                app.push()
+        }
     }
 }
