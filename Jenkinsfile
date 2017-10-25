@@ -1,12 +1,11 @@
-def appName="go-webserver"
-def project=""
-def tag="blue"
-def altTag="green"
-
 node {
   def DOCKER_HUB_ACCOUNT = 'icrosby'
   def DOCKER_IMAGE_NAME = 'go-example-webserver'
   def K8S_DEPLOYMENT_NAME = 'go-example-webserver'
+  def appName="go-webserver"
+  def project=""
+  def tag="blue"
+  def altTag="green"
 
   project = env.PROJECT_NAME
 
@@ -46,7 +45,7 @@ node {
   }
 
   stage("manual test") {
-    input message: "Test new deployment via: http://${deploy_route}. Approve?", id: "approval"
+    input message: "Test new deployment via: http://${deploy_route}/go. Approve?", id: "approval"
   }
 
   stage("go to production")
