@@ -6,18 +6,20 @@ node {
 
     checkout scm
 
-    stage("build")
     echo 'Building Go App'
-    docker.image('icrosby/jenkins-agent:kube').withRun('-u root').inside{
-        sh 'go build' 
+    stage("build") {
+        docker.image('icrosby/jenkins-agent:kube').withRun('-u root').inside{
+            sh 'go build' 
+        }
     }
 
-    stage("test")
     echo 'Testing Go App'
-    docker.image('icrosby/jenkins-agent:kube').withRun('-u root').inside{
-        sh 'go test' 
+    stage("test") {
+        docker.image('icrosby/jenkins-agent:kube').withRun('-u root').inside{
+            sh 'go test' 
+        }
     }
-
+    
     stage("build image")
     echo 'Building Docker image'
     def app = docker.build "${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}:${BUILD_ID}"
