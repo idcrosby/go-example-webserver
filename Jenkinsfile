@@ -8,18 +8,18 @@ node {
 
     echo 'Building Go App'
     stage("build") {
-        docker.image('icrosby/jenkins-agent:kube').withRun('-u root').inside{
+        docker.image("icrosby/jenkins-agent:kube").inside('-u root') {
             sh 'go build' 
         }
     }
 
     echo 'Testing Go App'
     stage("test") {
-        docker.image('icrosby/jenkins-agent:kube').withRun('-u root').inside{
+        docker.image('icrosby/jenkins-agent:kube').inside('-u root') {
             sh 'go test' 
         }
     }
-    
+
     stage("build image")
     echo 'Building Docker image'
     def app = docker.build "${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}:${BUILD_ID}"
