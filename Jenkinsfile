@@ -1,6 +1,6 @@
 node {
 
-    def DOCKER_HUB_ACCOUNT = 'vlal'
+    def DOCKER_HUB_ACCOUNT = 'icrosby'
     def DOCKER_IMAGE_NAME = 'go-example-webserver'
     def K8S_DEPLOYMENT_NAME = 'go-example-webserver'
 
