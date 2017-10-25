@@ -41,7 +41,7 @@ node {
   echo "Deploying image"
   docker.image('smesch/kubectl').inside{
     withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
-      sh "kubectl --kubeconfig=$KUBECONFIG set image deployment/${K8S_DEPLOYMENT_NAME} ${K8S_DEPLOYMENT_NAME}=${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}:${tag}"
+      sh "kubectl --kubeconfig=$KUBECONFIG set image deployment/${K8S_DEPLOYMENT_NAME}-${tag} ${K8S_DEPLOYMENT_NAME}=${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}:${tag}"
     }
   }
 
