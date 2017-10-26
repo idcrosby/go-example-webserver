@@ -2,7 +2,6 @@ node {
 
     def DOCKER_HUB_ACCOUNT = 'icrosby'
     def DOCKER_IMAGE_NAME = 'go-example-webserver'
-    def DOCKER_REGISTRY = 'localhost:5000'
     def K8S_DEPLOYMENT_NAME = 'go-example-webserver'
 
     checkout scm
@@ -23,18 +22,18 @@ node {
 
     echo 'Building Docker image'
     stage('BuildImage') 
-    def app = docker.build("${DOCKER_REGISTRY}/${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}:${BUILD_NUMBER}", '.')
+    def app = docker.build("${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}:${BUILD_NUMBER}", '.')
 
     echo 'Testing Docker image'
     stage("test image") {
-        docker.image("${DOCKER_REGISTRY}/${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}:${BUILD_NUMBER}").inside {
+        docker.image("${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}:${BUILD_NUMBER}").inside {
             sh './test.sh'
         }
     }
 
     stage("Push")
     echo 'Pushing Docker Image'
-    docker.withRegistry('http://localhost:5000/') {
+  docker.withRegistry('https://index.docker.io/v1/', 'docker-hub') {
         def digest = app.push()
         echo $digest
     }
