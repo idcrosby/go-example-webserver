@@ -1,7 +1,7 @@
 node {
 
     def DOCKER_HUB_ACCOUNT = 'icrosby'
-    def DOCKER_IMAGE_NAME = 'go-example-webserver'
+    def DOCKER_IMAGE_NAME = 'go-example-webserver-2'
     
     checkout scm
 
@@ -29,7 +29,7 @@ node {
             sh './test.sh'
         }
     }
-    
+
     stage("Push")
     echo 'Pushing Docker Image'
     docker.withRegistry('https://index.docker.io/v1/', 'docker-hub') {
