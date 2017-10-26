@@ -35,7 +35,8 @@ node {
     stage("Push")
     echo 'Pushing Docker Image'
     docker.withRegistry('http://localhost:5000/') {
-        app.push()
+        def digest = app.push()
+        echo $digest
     }
 
     stage("Deploy") 
