@@ -25,7 +25,7 @@ node {
 
     echo 'Testing Docker image'
     stage("test image") {
-        docker.image("${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}").inside(-v ./test.sh:/test.sh -u root) {
+        docker.image("${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}").inside("-v ./test.sh:/test.sh", "-u root") {
             sh './test.sh'
         }
     }
