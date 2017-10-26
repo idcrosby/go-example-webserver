@@ -25,8 +25,14 @@ node {
 
     echo 'Testing Docker image'
     stage("test image") {
-        docker.image("${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}").inside("-v ./test.sh:/test.sh", "-u root") {
+        docker.image("${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}").inside {
             sh './test.sh'
         }
+    }
+    
+    stage("Push")
+    echo 'Pushing Docker Image'
+    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub') {
+        app.push()
     }
 }
