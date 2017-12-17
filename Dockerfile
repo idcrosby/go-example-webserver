@@ -1,5 +1,8 @@
 FROM golang:1.9
 
+ARG GIT_COMMIT=unkown
+LABEL git-commit=$GIT_COMMIT
+
 COPY *.go /go/
 COPY *.txt /go/
 RUN apt-get update && apt-get install libcap-ng-utils
