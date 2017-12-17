@@ -1,6 +1,6 @@
 node {
 
-    def DOCKER_HUB_ACCOUNT = 'idcrosby'
+    def DOCKER_HUB_ACCOUNT = 'icrosby'
     def DOCKER_IMAGE_NAME = 'go-example-webserver'
 
     checkout scm
