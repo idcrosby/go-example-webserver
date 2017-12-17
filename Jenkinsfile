@@ -1,7 +1,7 @@
 node {
 
     def DOCKER_HUB_ACCOUNT = 'idcrosby'
-    def DOCKER_IMAGE_NAME = 'go-example-webserver-delete'
+    def DOCKER_IMAGE_NAME = 'go-example-webserver'
 
     checkout scm
 
@@ -28,6 +28,12 @@ node {
         docker.image("${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}").inside {
             sh './test.sh'
         }
+    }
+
+    echo 'Pushing Docker Image Locally'
+    stage("Push local")
+    docker.withRegistry('http://localhost:5000/') {
+        app.push()
     }
 
     echo 'Pushing Docker Image'
