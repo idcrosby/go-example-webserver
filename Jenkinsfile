@@ -46,7 +46,7 @@ node {
     stage("Deploy") 
     docker.image('smesch/kubectl').inside{
         withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
-            sh "kubectl --kubeconfig=$KUBECONFIG set image deployment/${K8S_DEPLOYMENT_NAME} ${K8S_DEPLOYMENT_NAME}=${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}"
+            sh "kubectl --kubeconfig=$KUBECONFIG apply -f go-example-webserver.yaml"
         }
     }
 }

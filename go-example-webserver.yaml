@@ -1,0 +1,18 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: go-example-webserver
+  labels:
+    name: go-example-webserver
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: go-example-webserver
+    spec:
+      containers:
+        - name: go-example-webserver
+          image: icrosby/go-example-webserver
+          ports:
+            - containerPort: 8080
