@@ -21,7 +21,7 @@ node {
     
     echo 'Building Docker image'
     stage('BuildImage') 
-    def app = docker.build("${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}")
+    def app = docker.build("${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}:${BUILD_NUMBER}")
 
     echo 'Testing Docker image'
     stage("test image") {
@@ -33,7 +33,7 @@ node {
     echo 'Pushing Docker Image Locally'
     stage("Push local")
     docker.withRegistry('http://localhost:5000/') {
-        app.push()
+        app.push("prod")
     }
 
     echo 'Pushing Docker Image'
