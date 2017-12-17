@@ -1,5 +1,9 @@
 node {
 
+
+    def DOCKER_HUB_ACCOUNT = 'idcrosby'
+    def DOCKER_IMAGE_NAME = 'go-example-webserver-delete'
+
     checkout scm
 
     echo 'Building Go App'
@@ -15,4 +19,8 @@ node {
             sh 'go test' 
         }
     }
+    
+    echo 'Building Docker image'
+    stage('BuildImage') 
+    def app = docker.build("${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}", '.')
 }
