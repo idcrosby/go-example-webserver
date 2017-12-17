@@ -21,7 +21,7 @@ node {
     
     echo 'Building Docker image'
     stage('BuildImage') 
-    def app = docker.build("${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}:${BUILD_NUMBER}")
+    def app = docker.build("${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}:${BUILD_NUMBER}", "--label key=value")
 
     echo 'Testing Docker image'
     stage("test image") {
