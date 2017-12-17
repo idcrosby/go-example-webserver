@@ -23,10 +23,10 @@ node {
     stage('BuildImage') 
     def app = docker.build("${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}", '.')
 
-    container('docker') {
-        echo 'Testing Docker image'
-        stage("TestImage") {
-            sh("docker run ${imageTag} /test.sh")
+    echo 'Testing Docker image'
+    stage("test image") {
+        docker.image("${DOCKER_HUB_ACCOUNT}/${DOCKER_IMAGE_NAME}").inside {
+            sh './test.sh'
         }
     }
 }
