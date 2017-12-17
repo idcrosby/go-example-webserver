@@ -16,3 +16,4 @@ spec:
           image: icrosby/go-example-webserver
           ports:
             - containerPort: 8080
+          imagePullPolicy: Always
